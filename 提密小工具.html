@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>提密小工具</title>
+    <link
+      rel="icon"
+      href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAABzUlEQVR4nO2Xv0rDUBTGP3EUBHf/DLq4+AIOgjjp4CMo1kFwctKtWxXfQKg5J60uzqLgrvgCOqibgrhIwY7qJzeWgjU0Vu+9STAfHAjJzbnfryc5PQEKFUpPrGKMggUKtihQKs6ouKLgiYJnKt6iMMfmnLn2uUZa9yyYHH5Nh5ij4piKBhW0FI0oZ4BZt+YV2xS8WzTOL2FyCypuzAuWnRnXjgixZNc80UfBrTcAwa3Z0x5AiMmETQ8YYIWCaSrGeYgh1jDQvr+Ggda5iWiNWas4TKjCpD0AxWq3zf6Ql12qULIJsO8dQFG1ByC46LpZHcM95wwwkgBwbhPgIaHcJ8ZQj+ZPE3Le2wRoeutA2gZ4sQnwmgLAa94r0PT3DriJR39dyE0FLr39DziKmj0AQSmFCqz5nIVcxJTtafTO469/zyP0WwPw/hgJ1q2ab0Modp1+kWkUe1a/Bb5BmHleEFBxYxGmEc1TIRadGY+FqWOQIWao2PiF6U0GmGeIUWRBcSavK58Rdw1ZEwuAfFWgjBwDlJFF8acAgh1kUezlEcoiBIsulLKKLpS2ii6UtooulLai+T7Ps1AcRK5moTiIGIBsm++E6ADIh/lC/00flTf270tRb4gAAAAASUVORK5CYII="
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        text-decoration: none;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      p,
+      li,
+      button {
+        color: #16191c;
+        font: bold 1rem sans-serif;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      h2 {
+        font-size: 1.4rem;
+      }
+
+      h3 {
+        font-size: 1.2rem;
+      }
+
+      button {
+        border: none;
+        background: none;
+        cursor: pointer;
+      }
+
+      li {
+        margin: 0 0 0 1rem;
+        font-size: 1rem;
+      }
+
+      hr {
+        border: solid 2px #16191c;
+      }
+
+      .gap {
+        margin: 0.5rem;
+      }
+
+      .checkedBut {
+        border: solid 3px #f9f9f9;
+      }
+
+      .home {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-radius: 2rem;
+        margin: 1rem;
+        background: #1ebfbf;
+      }
+
+      .promptInput {
+        width: 300px;
+        height: 2rem;
+        text-align: center;
+      }
+
+      .generationBut {
+        padding: 0.5rem;
+        border-radius: 8px;
+        color: #f9f9f9;
+        background: #cc6000;
+      }
+
+      .passwordOutput {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 300px;
+        height: 3rem;
+        border: solid 3px #f9f9f9;
+        border-radius: 1rem;
+        background: #16191c;
+      }
+      .passwordOutput p {
+        color: #fa3556;
+        font-size: 1.2rem;
+      }
+
+      .optionsAreaL1 {
+        display: flex;
+        margin: 0.5rem;
+      }
+      .optionsAreaL1 .optionsAreaL2-1,
+      .optionsAreaL1 .optionsAreaL2-2 {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        width: 150px;
+        height: 150px;
+        border-radius: 12px;
+        margin: 10px;
+        background: #16191c;
+      }
+      .optionsAreaL1 .optionsAreaL2-1 h3,
+      .optionsAreaL1 .optionsAreaL2-2 h3 {
+        height: 42px;
+        color: #f9f9f9;
+        line-height: 42px;
+      }
+      .optionsAreaL1 .optionsAreaL2-1 button,
+      .optionsAreaL1 .optionsAreaL2-2 button {
+        width: 140px;
+        border-radius: 8px;
+        margin: 0 0 5px 0;
+        background: #cc6000;
+      }
+      .optionsAreaL1 .optionsAreaL2-1 button {
+        height: 50px;
+      }
+      .optionsAreaL1 .optionsAreaL2-2 button {
+        height: 32px;
+      }
+
+      .expoundArea {
+        width: 320px;
+      }
+      .expoundArea h2 {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="home">
+      <h1 class="gap">提密小工具</h1>
+      <input class="promptInput gap" type="text" placeholder="提示輸入" />
+      <button class="generationBut gap" onclick="computeHash()">
+        密碼生成
+      </button>
+      <div class="passwordOutput gap">
+        <p class="passwordShow">密碼</p>
+      </div>
+      <div>
+        <div class="optionsAreaL1">
+          <div class="optionsAreaL2-1">
+            <h3>密碼長度</h3>
+            <button
+              class="quantity12But checkedBut"
+              onclick="checkedQuantity12()"
+            >
+              12
+            </button>
+            <button class="quantity16But" onclick="checkedQuantity16()">
+              16
+            </button>
+          </div>
+          <div class="optionsAreaL2-2">
+            <h3>密碼樣式</h3>
+            <button
+              class="allSymbolsBut checkedBut"
+              onclick="checkedAllSymbols()"
+            >
+              有符號
+            </button>
+            <button class="lessSymbolsBut" onclick="checkedLessSymbols()">
+              少符號
+            </button>
+            <button class="noSymbolsBut" onclick="checkedNoSymbols()">
+              無符號
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="expoundArea">
+        <div class="gap">
+          <h2>使用說明</h2>
+          <ul>
+            <li>建議詳閱說明，並反覆測試工具，了解特性後再使用。</li>
+            <li>
+              本工具為了解決複雜密碼不好記的問題而設計，只需要有獨特的提示，即可生成複雜的密碼，達到隨時、方便快速使用個人密碼的效果。
+            </li>
+            <li>
+              這裡主要解決方便性的問題，為防萬一，強烈建議將提示、密碼做其他備份。
+            </li>
+            <li>
+              將本網頁另存新檔，可供裝置離線使用。注意請先重新整理後再下載，避免將使用者數據一同下載。
+            </li>
+          </ul>
+        </div>
+        <div class="gap">
+          <h3>使用示範</h3>
+          <hr />
+          <ul>
+            <li>例如提示輸入〝小明 Google 2024〞…</li>
+            <li>〝小明〞做為個人獨特的提示，可以是綽號、地名、編號…等。</li>
+            <li>〝Google〞可做不同網站使用的提示。</li>
+            <li>〝2024〞可以每年更新密碼。</li>
+            <li>以上為示範，提示可以有各種變化。</li>
+            <li>提示盡量簡短、好記為主。</li>
+          </ul>
+        </div>
+        <div class="gap">
+          <h3>密碼生成特性</h3>
+          <hr />
+          <ul>
+            <li>相同的提示只會產出相同的密碼。</li>
+            <li>
+              提示的任何些微變化都會改變密碼整體結構，例如空白建、順序、大小寫、數字的
+              +1 或 -1。
+            </li>
+            <li>不同提示的長短、複雜性，所產生的密碼皆相同複雜。</li>
+            <li>密碼無法還原提示。</li>
+          </ul>
+        </div>
+        <div class="gap">
+          <h3>密碼樣式說明</h3>
+          <hr />
+          <ul>
+            <li>有符號：符號 + 數字 + 英文大小寫。</li>
+            <li>
+              少符號：與〝有符號〞相比，符號生成的樣式較少，若是〝有符號〞不符合網站的密碼規則，可以嘗試使用這個密碼樣式。
+            </li>
+            <li>無符號：數字 + 英文大小寫。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <script>
+      let promptInput;
+      let passwordQuantity = 12;
+      let passwordType = "allSymbols";
+      let speciesNumber = 4;
+      let asciiArr = [];
+      let delLoc = {
+        symbol: [],
+        number: [],
+        upperCase: [],
+        lowerCase: [],
+      };
+
+      addEventListener("keydown", (e) => {
+        if (e.key == "Enter") {
+          computeHash();
+        }
+      });
+
+      const quantity12But = document.querySelector(".quantity12But");
+      const quantity16But = document.querySelector(".quantity16But");
+
+      const allSymbolsBut = document.querySelector(".allSymbolsBut");
+      const lessSymbolsBut = document.querySelector(".lessSymbolsBut");
+      const noSymbolsBut = document.querySelector(".noSymbolsBut");
+
+      function computeHash() {
+        promptInput = document.querySelector(".promptInput").value;
+        if (promptInput != "") {
+          passwordGenerator(promptInput + passwordType + passwordQuantity);
+        }
+      }
+
+      function checkedQuantity12() {
+        passwordQuantity = 12;
+        quantity12But.classList.add("checkedBut");
+        quantity16But.classList.remove("checkedBut");
+      }
+
+      function checkedQuantity16() {
+        passwordQuantity = 16;
+        quantity16But.classList.add("checkedBut");
+        quantity12But.classList.remove("checkedBut");
+      }
+
+      function checkedAllSymbols() {
+        passwordType = "allSymbols";
+        speciesNumber = 4;
+        allSymbolsBut.classList.add("checkedBut");
+        lessSymbolsBut.classList.remove("checkedBut");
+        noSymbolsBut.classList.remove("checkedBut");
+      }
+
+      function checkedLessSymbols() {
+        passwordType = "lessSymbols";
+        speciesNumber = 4;
+        lessSymbolsBut.classList.add("checkedBut");
+        allSymbolsBut.classList.remove("checkedBut");
+        noSymbolsBut.classList.remove("checkedBut");
+      }
+
+      function checkedNoSymbols() {
+        passwordType = "noSymbols";
+        speciesNumber = 3;
+        noSymbolsBut.classList.add("checkedBut");
+        allSymbolsBut.classList.remove("checkedBut");
+        lessSymbolsBut.classList.remove("checkedBut");
+      }
+
+      async function passwordGenerator(e) {
+        delLoc = {
+          symbol: [],
+          number: [],
+          upperCase: [],
+          lowerCase: [],
+        };
+        let hashArr = new TextEncoder().encode(e);
+        hashArr = await crypto.subtle.digest("SHA-512", hashArr);
+        hashArr = new Uint8Array(hashArr);
+        hashArr = Array.from(hashArr);
+        if (passwordType == "allSymbols") {
+          allStringType(hashArr);
+        } else if (passwordType == "lessSymbols") {
+          lessSymbolsType(hashArr);
+        } else {
+          noSymbolsType(hashArr);
+        }
+      }
+
+      function allStringType(hashArr) {
+        // 將範圍在 0~255 的雜湊值轉為範圍在 33~126 的 ASCII 值
+        asciiArr = hashArr.map((h) => {
+          if (h >= 0 && h <= 29) {
+            h = 33 + (h * 14) / 29;
+          } else if (h >= 30 && h <= 93) {
+            h = 48 + ((h - 30) * 9) / 63;
+          } else if (h >= 94 && h <= 107) {
+            h = 58 + ((h - 94) * 6) / 13;
+          } else if (h >= 108 && h <= 171) {
+            h = 65 + ((h - 108) * 25) / 63;
+          } else if (h >= 172 && h <= 183) {
+            h = 91 + ((h - 172) * 5) / 11;
+          } else if (h >= 184 && h <= 247) {
+            h = 97 + ((h - 184) * 25) / 63;
+          } else {
+            h = 123 + ((h - 248) * 3) / 7;
+          }
+          return Math.round(h);
+        });
+        checkDuplicates();
+        for (let i = 0; i < asciiArr.length; i++) {
+          // 檢查是哪個種類，並記錄哪次迴圈時會脫離密碼長度
+          if (
+            (asciiArr[i] >= 33 && asciiArr[i] <= 47) ||
+            (asciiArr[i] >= 58 && asciiArr[i] <= 64) ||
+            (asciiArr[i] >= 91 && asciiArr[i] <= 96) ||
+            (asciiArr[i] >= 123 && asciiArr[i] <= 126)
+          ) {
+            delLoc.symbol.push(i + passwordQuantity);
+          } else if (asciiArr[i] >= 48 && asciiArr[i] <= 57) {
+            delLoc.number.push(i + passwordQuantity);
+          } else if (asciiArr[i] >= 65 && asciiArr[i] <= 90) {
+            delLoc.upperCase.push(i + passwordQuantity);
+          } else if (asciiArr[i] >= 97 && asciiArr[i] <= 122) {
+            delLoc.lowerCase.push(i + passwordQuantity);
+          }
+          // 脫離密碼長度後，觸發刪除
+          if (delLoc.symbol[0] == i) {
+            delLoc.symbol.shift();
+          } else if (delLoc.number[0] == i) {
+            delLoc.number.shift();
+          } else if (delLoc.upperCase[0] == i) {
+            delLoc.upperCase.shift();
+          } else if (delLoc.lowerCase[0] == i) {
+            delLoc.lowerCase.shift();
+          }
+          // 檢查長度是否足夠與所需長度內的每個種類的各自數量，
+          // 數量達標就剪下該段當作密碼
+          if (
+            i >= passwordQuantity - 1 &&
+            delLoc.symbol.length > passwordQuantity / (speciesNumber + 1) &&
+            delLoc.number.length > passwordQuantity / (speciesNumber + 1) &&
+            delLoc.upperCase.length > passwordQuantity / (speciesNumber + 1) &&
+            delLoc.lowerCase.length > passwordQuantity / (speciesNumber + 1)
+          ) {
+            asciiArr = asciiArr.slice(i - passwordQuantity + 1, i + 1);
+            passwordOutput(asciiArr);
+            break;
+          } else if (i == asciiArr.length - 1) {
+            // 無法生成合格密碼，用不合格的 Array 再次重新雜湊、生成密碼
+            passwordGenerator(asciiArr);
+          }
+        }
+      }
+
+      function lessSymbolsType(hashArr) {
+        // 將範圍在 0~255 的雜湊值轉為範圍在 33~126 的 ASCII 值
+        asciiArr = hashArr.map((h) => {
+          if (h >= 0 && h <= 63) {
+            if (h >= 0 && h <= 12) {
+              h = 33;
+            } else if (h >= 13 && h <= 25) {
+              h = 45;
+            } else if (h >= 26 && h <= 37) {
+              h = 46;
+            } else if (h >= 38 && h <= 50) {
+              h = 58;
+            } else {
+              h = 95;
+            }
+          } else if (h >= 64 && h <= 127) {
+            h = 48 + ((h - 64) * 9) / 63;
+          } else if (h >= 128 && h <= 191) {
+            h = 65 + ((h - 128) * 25) / 63;
+          } else {
+            h = 97 + ((h - 192) * 25) / 63;
+          }
+          return Math.round(h);
+        });
+        checkDuplicates(asciiArr);
+        for (let i = 0; i < asciiArr.length; i++) {
+          // 檢查是哪個種類，並記錄哪次迴圈時會脫離密碼長度
+          if (
+            asciiArr[i] == 33 ||
+            asciiArr[i] == 45 ||
+            asciiArr[i] == 46 ||
+            asciiArr[i] == 58 ||
+            asciiArr[i] == 95
+          ) {
+            delLoc.symbol.push(i + passwordQuantity);
+          } else if (asciiArr[i] >= 48 && asciiArr[i] <= 57) {
+            delLoc.number.push(i + passwordQuantity);
+          } else if (asciiArr[i] >= 65 && asciiArr[i] <= 90) {
+            delLoc.upperCase.push(i + passwordQuantity);
+          } else if (asciiArr[i] >= 97 && asciiArr[i] <= 122) {
+            delLoc.lowerCase.push(i + passwordQuantity);
+          }
+          // 脫離密碼長度後，觸發刪除
+          if (delLoc.symbol[0] == i) {
+            delLoc.symbol.shift();
+          } else if (delLoc.number[0] == i) {
+            delLoc.number.shift();
+          } else if (delLoc.upperCase[0] == i) {
+            delLoc.upperCase.shift();
+          } else if (delLoc.lowerCase[0] == i) {
+            delLoc.lowerCase.shift();
+          }
+          // 檢查長度是否足夠與所需長度內的每個種類的各自數量，
+          // 數量達標就剪下該段當作密碼
+          if (
+            i >= passwordQuantity - 1 &&
+            delLoc.symbol.length > passwordQuantity / (speciesNumber + 1) &&
+            delLoc.number.length > passwordQuantity / (speciesNumber + 1) &&
+            delLoc.upperCase.length > passwordQuantity / (speciesNumber + 1) &&
+            delLoc.lowerCase.length > passwordQuantity / (speciesNumber + 1)
+          ) {
+            asciiArr = asciiArr.slice(i - passwordQuantity + 1, i + 1);
+            passwordOutput(asciiArr);
+            break;
+          } else if (i == asciiArr.length - 1) {
+            // 無法生成合格密碼，用不合格的 Array 再次重新雜湊、生成密碼
+            passwordGenerator(asciiArr);
+          }
+        }
+      }
+
+      function noSymbolsType(hashArr) {
+        // 將範圍在 0~255 的雜湊值轉為範圍在 33~126 的 ASCII 值
+        asciiArr = hashArr.map((h) => {
+          if (h >= 0 && h <= 83) {
+            h = 48 + (h * 9) / 83;
+          } else if (h >= 84 && h <= 169) {
+            h = 65 + ((h - 84) * 25) / 85;
+          } else {
+            h = 97 + ((h - 170) * 25) / 85;
+          }
+          return Math.round(h);
+        });
+        checkDuplicates(asciiArr);
+        for (let i = 0; i < asciiArr.length; i++) {
+          // 檢查是哪個種類，並記錄哪次迴圈時會脫離密碼長度
+          if (asciiArr[i] >= 48 && asciiArr[i] <= 57) {
+            delLoc.number.push(i + passwordQuantity);
+          } else if (asciiArr[i] >= 65 && asciiArr[i] <= 90) {
+            delLoc.upperCase.push(i + passwordQuantity);
+          } else if (asciiArr[i] >= 97 && asciiArr[i] <= 122) {
+            delLoc.lowerCase.push(i + passwordQuantity);
+          }
+          // 脫離密碼長度後，觸發刪除
+          if (delLoc.number[0] == i) {
+            delLoc.number.shift();
+          } else if (delLoc.upperCase[0] == i) {
+            delLoc.upperCase.shift();
+          } else if (delLoc.lowerCase[0] == i) {
+            delLoc.lowerCase.shift();
+          }
+          // 檢查長度是否足夠與所需長度內的每個種類的各自數量，
+          // 數量達標就剪下該段當作密碼
+          if (
+            i >= passwordQuantity - 1 &&
+            delLoc.number.length > passwordQuantity / (speciesNumber + 1) &&
+            delLoc.upperCase.length > passwordQuantity / (speciesNumber + 1) &&
+            delLoc.lowerCase.length > passwordQuantity / (speciesNumber + 1)
+          ) {
+            asciiArr = asciiArr.slice(i - passwordQuantity + 1, i + 1);
+            passwordOutput(asciiArr);
+            break;
+          } else if (i == asciiArr.length - 1) {
+            // 無法生成合格密碼，用不合格的 Array 再次重新雜湊、生成密碼
+            passwordGenerator(asciiArr);
+          }
+        }
+      }
+
+      function passwordOutput(e) {
+        asciiArray = e.map((a) => String.fromCharCode(a));
+        const password = asciiArray.join("");
+        document.querySelector(".passwordShow").innerText = password;
+      }
+
+      function checkDuplicates() {
+        // 檢查密碼長度內是否有重複的值，若有就刪除該值
+        for (let i = 0; i < asciiArr.length; i++) {
+          for (let j = 1; j < passwordQuantity; j++) {
+            if (asciiArr[i] == asciiArr[i + j]) {
+              asciiArr.splice(i + j, 1);
+              j -= 1;
+            }
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
